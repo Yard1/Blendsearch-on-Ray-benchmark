@@ -101,8 +101,9 @@ def benchmark(searcher,
                                                         stratify=y)
     upper = min(2048, int(len(X_train) // cv))
 
-    intlog = functools(tune.qloguniform,
-                       q=1) if searcher == "blendsearch" else tune.lograndint
+    intlog = functools.partial(
+        tune.qloguniform,
+        q=1) if searcher == "blendsearch" else tune.lograndint
     lgbm_config = {
         "n_estimators": intlog(lower=4, upper=upper),
         "num_leaves": intlog(lower=4, upper=255),
