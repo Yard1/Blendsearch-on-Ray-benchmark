@@ -1,0 +1,9 @@
+https://s3-us-west-2.amazonaws.com/ray-wheels/master/560fd1556807ade19ac940328d4796311d821eb6/ray-2.0.0.dev0-cp38-cp38-manylinux2014_x86_64.whl
+flaml==0.5.6
+lightgbm==3.2.1
+scikit-learn==0.24.2
+pandas
+tabulate
+tensorboardX>=1.9
+optuna==2.8.0
+openml
