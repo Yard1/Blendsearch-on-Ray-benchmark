@@ -58,6 +58,7 @@ def ray_fit_and_score(
         error_score=error_score,
     )
 
+
 class BenchmarkTrainable(tune.Trainable):
     def setup(self, config, X=None, y=None, cv=4, estimator=None):
         self.config = config
@@ -80,7 +81,8 @@ class BenchmarkTrainable(tune.Trainable):
             X_ref=self.X_ref,
             y=self.y,
             y_ref=self.y_ref,
-            scoring="roc_auc" if len(np.unique(self.y)) == 2 else "roc_auc_ovr_weighted",
+            scoring="roc_auc"
+            if len(np.unique(self.y)) == 2 else "roc_auc_ovr_weighted",
             cv=self.cv,
         )
         return {"roc_auc": np.mean(cv_results["test_score"])}
@@ -137,8 +139,7 @@ class BenchmarkTrainable(tune.Trainable):
                 return_times=True,
                 return_estimator=return_estimator,
                 error_score=error_score,
-            )
-            for train, test in train_test
+            ) for train, test in train_test
         ]
 
         results = ray.get(results_futures)
@@ -160,7 +161,8 @@ class BenchmarkTrainable(tune.Trainable):
 
         test_scores_dict = _normalize_score_results(results["test_scores"])
         if return_train_score:
-            train_scores_dict = _normalize_score_results(results["train_scores"])
+            train_scores_dict = _normalize_score_results(
+                results["train_scores"])
 
         for name in test_scores_dict:
             ret["test_%s" % name] = test_scores_dict[name]
