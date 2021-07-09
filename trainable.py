@@ -71,9 +71,10 @@ class BenchmarkTrainable(tune.Trainable):
 
     def step(self):
         config = self.config.copy()
-        config["n_estimators"] = int(config["n_estimators"])
-        config["num_leaves"] = int(config["num_leaves"])
-        config["min_child_samples"] = int(config["min_child_samples"])
+        config["n_estimators"] = int(round(config["n_estimators"]))
+        config["num_leaves"] = int(round(config["num_leaves"]))
+        config["min_child_samples"] = int(round(config["min_child_samples"]))
+        config["max_bin"] = 1 << int(round(config["log_max_bin"])) - 1
         estimator = clone(self.estimator).set_params(**config)
         cv_results = self._cross_validate(
             estimator,

@@ -56,9 +56,10 @@ def score_on_test(estimator: LGBMClassifier, config, X_train, y_train, X_test,
                   y_test):
     config = config.copy()
     estimator = clone(estimator)
-    config["n_estimators"] = int(config["n_estimators"])
-    config["num_leaves"] = int(config["num_leaves"])
-    config["min_child_samples"] = int(config["min_child_samples"])
+    config["n_estimators"] = int(round(config["n_estimators"]))
+    config["num_leaves"] = int(round(config["num_leaves"]))
+    config["min_child_samples"] = int(round(config["min_child_samples"]))
+    config["max_bin"] = 1 << int(round(config["log_max_bin"])) - 1
     estimator.set_params(**config)
     estimator.fit(X_train, y_train)
     y_proba = estimator.predict_proba(X_test)
@@ -99,15 +100,16 @@ def benchmark(searcher,
                                                         test_size=test_size,
                                                         random_state=seed,
                                                         stratify=y)
-    upper = min(2048, int(len(X_train) // cv))
+    upper = min(32768, int(len(X_train) // cv))
 
     intlog = functools.partial(
         tune.qloguniform,
         q=1) if searcher == "blendsearch" else tune.lograndint
     lgbm_config = {
         "n_estimators": intlog(lower=4, upper=upper),
-        "num_leaves": intlog(lower=4, upper=255),
+        "num_leaves": intlog(lower=4, upper=upper),
         "min_child_samples": intlog(lower=2, upper=2**7),
+        "log_max_bin": intlog(lower=3, upper=10),
         "subsample": tune.uniform(lower=0.1, upper=1.0),
         "colsample_bytree": tune.uniform(lower=0.01, upper=1.0),
         "reg_alpha": tune.loguniform(lower=1 / 1024, upper=10.0),
@@ -117,6 +119,7 @@ def benchmark(searcher,
         "n_estimators": 100,
         "num_leaves": 31,
         "min_child_samples": 20,
+        "log_max_bin": 8,
         "subsample": 1.0,
         "colsample_bytree": 1.0,
         "reg_alpha": 1 / 1024,
