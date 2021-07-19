@@ -7,7 +7,7 @@ from ray import tune
 from ray.tune.suggest import ConcurrencyLimiter
 from ray.tune.suggest.basic_variant import BasicVariantGenerator
 from ray.tune.suggest.optuna import OptunaSearch
-from ray.tune.suggest.flaml import BlendSearch
+from ray.tune.suggest.flaml import BlendSearch, CFO
 from ray.tune import with_parameters, PlacementGroupFactory
 
 from optuna.samplers import TPESampler
@@ -43,7 +43,7 @@ tasks = {
     1111: "KDDCup09_appetency",
 }
 
-searchers = ["random", "optuna", "blendsearch"]
+searchers = ["random", "optuna", "blendsearch", "cfo"]
 
 
 def col_to_fp32(col):
@@ -104,7 +104,7 @@ def benchmark(searcher,
 
     intlog = functools.partial(
         tune.qloguniform,
-        q=1) if searcher == "blendsearch" else tune.lograndint
+        q=1) if searcher in ("cfo", "blendsearch") else tune.lograndint
     lgbm_config = {
         "n_estimators": intlog(lower=4, upper=upper),
         "num_leaves": intlog(lower=4, upper=upper),
@@ -139,6 +139,11 @@ def benchmark(searcher,
                                   points_to_evaluate=[init_config])
     elif searcher == "blendsearch":
         search_alg = BlendSearch(
+            seed=seed,
+            points_to_evaluate=[init_config],
+            low_cost_partial_config=blendsearch_low_cost_config)
+    elif searcher == "cfo":
+        search_alg = CFO(
             seed=seed,
             points_to_evaluate=[init_config],
             low_cost_partial_config=blendsearch_low_cost_config)
