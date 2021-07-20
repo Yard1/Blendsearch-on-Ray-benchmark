@@ -376,6 +376,9 @@ def benchmark(searcher,
     elif searcher == "blendsearch":
         search_alg = BlendSearch(
             seed=seed,
+            metric="roc_auc",
+            mode="max",
+            space=lgbm_config,
             points_to_evaluate=[init_config],
             low_cost_partial_config=blendsearch_low_cost_config)
         search_alg.set_search_properties(config={"time_budget_s": time_budget_s})
