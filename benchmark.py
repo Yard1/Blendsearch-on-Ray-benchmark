@@ -40,12 +40,12 @@ import ray
 from ray import tune
 
 tasks = {
-    # 41169: "helena",
-    # 41168: "jannis",
-    # 41166: "volkert",
-    # 41165: "robert",
-    # 41161: "riccardo",
-    # 41159: "guillermo",
+    41169: "helena",
+    41168: "jannis",
+    41166: "volkert",
+    41165: "robert",
+    41161: "riccardo",
+    41159: "guillermo",
     41150: "MiniBooNE",
     41138: "APSFailure",
     41027: "jungle_chess_2pcs_raw_endgame_complete",
