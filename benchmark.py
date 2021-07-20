@@ -40,12 +40,12 @@ import ray
 from ray import tune
 
 tasks = {
-    41169: "helena",
-    41168: "jannis",
-    41166: "volkert",
-    41165: "robert",
-    41161: "riccardo",
-    41159: "guillermo",
+    # 41169: "helena",
+    # 41168: "jannis",
+    # 41166: "volkert",
+    # 41165: "robert",
+    # 41161: "riccardo",
+    # 41159: "guillermo",
     41150: "MiniBooNE",
     41138: "APSFailure",
     41027: "jungle_chess_2pcs_raw_endgame_complete",
@@ -61,7 +61,9 @@ tasks = {
     1111: "KDDCup09_appetency",
 }
 
-searchers = ["random", "optuna", "blendsearch", "cfo"]
+# searchers = ["optuna", "cfo"]
+# searchers = ["random", "optuna", "blendsearch", "cfo"]
+searchers = ["optuna", "blendsearch"]
 
 
 class _EventActor:
@@ -376,6 +378,7 @@ def benchmark(searcher,
             seed=seed,
             points_to_evaluate=[init_config],
             low_cost_partial_config=blendsearch_low_cost_config)
+        search_alg.set_search_properties(config={"time_budget_s": time_budget_s})
     elif searcher == "cfo":
         search_alg = CFO(seed=seed,
                          points_to_evaluate=[init_config],
