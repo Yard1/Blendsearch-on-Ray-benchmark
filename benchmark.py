@@ -61,7 +61,9 @@ tasks = {
     1111: "KDDCup09_appetency",
 }
 
-searchers = ["random", "optuna", "blendsearch", "cfo"]
+# searchers = ["optuna", "cfo"]
+# searchers = ["random", "optuna", "blendsearch", "cfo"]
+searchers = ["optuna", "blendsearch"]
 
 
 class _EventActor:
@@ -374,8 +376,12 @@ def benchmark(searcher,
     elif searcher == "blendsearch":
         search_alg = BlendSearch(
             seed=seed,
+            metric="roc_auc",
+            mode="max",
+            space=lgbm_config,
             points_to_evaluate=[init_config],
             low_cost_partial_config=blendsearch_low_cost_config)
+        search_alg.set_search_properties(config={"time_budget_s": time_budget_s})
     elif searcher == "cfo":
         search_alg = CFO(seed=seed,
                          points_to_evaluate=[init_config],
